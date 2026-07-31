@@ -1,0 +1,17 @@
+# Build files
+build/
+*.o
+*.a
+*.so
+*.out
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Editors
+.vscode/
+.idea/
+.zed/
