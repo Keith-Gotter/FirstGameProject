@@ -19,9 +19,30 @@ int main()
     float rectUR = 0;
     float rectLR = 0;
 
+    float CircleX = 100.0;
+    float CircleY = 100.0;
+    const float CircleRadius = 30.0;
+    float CircleSpeed = 150.0f;
+
         while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
+
+
+        CircleX += CircleSpeed * dt;
+
+        if (CircleX - CircleRadius <= 0)
+            {
+                CircleX = CircleRadius;
+                CircleSpeed = -CircleSpeed;
+
+            }
+
+        if (CircleX + CircleRadius >=WindowWidth)
+        {
+            CircleX = WindowWidth - CircleRadius;
+            CircleSpeed = -CircleSpeed;
+        }
 
         if (IsKeyDown(KEY_RIGHT))
         {
@@ -68,6 +89,7 @@ int main()
         ClearBackground(RAYWHITE);
         DrawText("Hello from Gotter", TextX, TextY, TextFont, LIGHTGRAY);
         DrawRectangle(rectX, rectY, rectWidth, rectHeight, BLUE);
+        DrawCircle(CircleX, CircleY, CircleRadius, BLUE);
         EndDrawing();
 
 
