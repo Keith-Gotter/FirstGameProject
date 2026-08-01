@@ -8,20 +8,33 @@ int main()
    const int WindowHeight = 450;
 
     InitWindow(WindowWidth, WindowHeight, "My First Game");
-    float TextFont = 20;
-    float TextX = 190;
-    float TextY = 200;
-    float rectWidth = 200;
-    float rectHeight = 80;
-    float rectX = 100.0f;
-    float rectY = 300.0;
+
+struct MiddleText{
+    float Font = 20;
+    float X = 100;
+    float Y = 200;
+    };
+    MiddleText text;
+
+struct Rectangle{
+    float Width = 200;
+    float Height = 80;
+    float X = 100.0f;
+    float Y = 300.0;
+    };
+    Rectangle Player;
+
     const float movespeed = 300.0f;
     float rectUR = 0;
     float rectLR = 0;
 
-    float CircleX = 100.0;
-    float CircleY = 100.0;
-    const float CircleRadius = 30.0;
+    struct Circle {
+    float X = 100.0;
+    float Y = 100.0;
+    const float Radius = 30.0;
+    };
+    Circle Npc;
+
     float CircleSpeed = 150.0f;
 
         while (!WindowShouldClose())
@@ -29,66 +42,66 @@ int main()
         float dt = GetFrameTime();
 
 
-        CircleX += CircleSpeed * dt;
+        Npc.X += CircleSpeed * dt;
 
-        if (CircleX - CircleRadius <= 0)
+        if (Npc.x - Npc.Radius <= 0)
             {
-                CircleX = CircleRadius;
+                Npc.X = Npc.Radius;
                 CircleSpeed = -CircleSpeed;
 
             }
 
-        if (CircleX + CircleRadius >=WindowWidth)
+        if (Npc.X + Npc.Radius >=WindowWidth)
         {
-            CircleX = WindowWidth - CircleRadius;
+            Npc.X = WindowWidth - Npc.Radius;
             CircleSpeed = -CircleSpeed;
         }
 
         if (IsKeyDown(KEY_RIGHT))
         {
-            rectX += movespeed * dt;
+            Player.X += movespeed * dt;
 
         }
 
         if (IsKeyDown(KEY_LEFT))
         {
-            rectX -= movespeed * dt;
+            Player.X -= movespeed * dt;
 
         }
 
 
         if (IsKeyDown(KEY_UP))
         {
-            rectY -= movespeed * dt;
+            Player.Y -= movespeed * dt;
         }
 
         if (IsKeyDown(KEY_DOWN))
         {
-            rectY += movespeed * dt;
+            Player.Y += movespeed * dt;
         }
 
-        rectUR = rectX + rectWidth;
-        rectLR = rectY + rectHeight;
+        rectUR = Player.x + Player.Width;
+        rectLR = Player.Y + Player.Height;
 
-        if (rectX <= 0) {
-            rectX = 0;
+        if (Player.X <= 0) {
+            Player.X = 0;
         }
         else if (rectUR >=WindowWidth) {
-            rectX = WindowWidth - rectWidth;
+            Player.X = WindowWidth - Player.Width;
         }
 
-        if (rectY <= 0) {
-            rectY = 0;
+        if (Player.Y <= 0) {
+            Player.Y = 0;
         }
         else if (rectLR >=WindowHeight) {
-            rectY = WindowHeight - rectHeight;
+            Player.Y = WindowHeight - Player.Height;
         }
 
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("Hello from Gotter", TextX, TextY, TextFont, LIGHTGRAY);
-        DrawRectangle(rectX, rectY, rectWidth, rectHeight, BLUE);
+        DrawText("Hello from Gotter", text.X, text.Y, text.Font, LIGHTGRAY);
+        DrawRectangle(Player.X, Player.Y, Player.Width, Player.Height, BLUE);
         DrawCircle(CircleX, CircleY, CircleRadius, BLUE);
         EndDrawing();
 
