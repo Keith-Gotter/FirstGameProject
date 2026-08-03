@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include <cmath>
+#include <random>
 
 int main()
 {
@@ -22,6 +23,7 @@ struct RectPlayer{
     float Height = 80;
     float X = 100.0f;
     float Y = 300.0;
+    Color PlayerColor = BLUE;
     };
     RectPlayer Player;
 
@@ -33,6 +35,8 @@ struct RectPlayer{
     float X = 100.0;
     float Y = 100.0;
     const float Radius = 30.0;
+    float SpeedX = 0;
+    float SpeedY = 0;
     };
     Circle Npc;
 
@@ -41,24 +45,47 @@ struct RectPlayer{
     float closestX;
     float closestY;
 
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(-300, 300);
+    float chosenX = dist(gen);
+    float chosenY = dist(gen);
+    Npc.SpeedX = chosenX;
+    Npc.SpeedY = chosenY;
+
         while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
 
-
-        Npc.X += CircleSpeed * dt;
+        Npc.X += Npc.SpeedX * dt;
+        Npc.Y += Npc.SpeedY * dt;
 
         if (Npc.X - Npc.Radius <= 0)
             {
                 Npc.X = Npc.Radius;
-                CircleSpeed = -CircleSpeed;
-
+                Npc.SpeedX = -Npc.SpeedX;
             }
 
         if (Npc.X + Npc.Radius >=WindowWidth)
         {
             Npc.X = WindowWidth - Npc.Radius;
-            CircleSpeed = -CircleSpeed;
+            Npc.SpeedX = -Npc.SpeedX;
+
+        }
+
+
+        if (Npc.Y - Npc.Radius <= 0)
+            {
+                Npc.Y = Npc.Radius;
+                Npc.SpeedY = -Npc.SpeedY;
+
+            }
+
+        if (Npc.Y + Npc.Radius >=WindowHeight)
+        {
+
+            Npc.Y = WindowHeight - Npc.Radius;
+            Npc.SpeedY = -Npc.SpeedY;
         }
 
         if (IsKeyDown(KEY_RIGHT))
@@ -122,10 +149,21 @@ struct RectPlayer{
         }
 
 
+        float dx = Npc.X - closestX;
+        float dy = Npc.Y - closestY;
+        float distance = sqrt(dx*dx + dy*dy);
+
+        if (distance < Npc.Radius) {
+            Player.PlayerColor = RED;
+        }
+        else {
+        Player.PlayerColor = BLUE;
+        }
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
         DrawText("Hello from Gotter", text.X, text.Y, text.Font, LIGHTGRAY);
-        DrawRectangle(Player.X, Player.Y, Player.Width, Player.Height, BLUE);
+        DrawRectangle(Player.X, Player.Y, Player.Width, Player.Height, Player.PlayerColor);
         DrawCircle(Npc.X, Npc.Y, Npc.Radius, BLUE);
         EndDrawing();
 
