@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include <cmath>
-#include <pthread.h>
 #include <random>
 
 
@@ -21,8 +20,8 @@ int main()
 
     struct RectPlayer
     {
-        float Width = 200;
-        float Height = 80;
+        float Width = 100;
+        float Height = 40;
         float X = 100.0f;
         float Y = 300.0;
         Color PlayerColor = BLUE;
@@ -34,7 +33,7 @@ int main()
     {
         float X = 100.0;
         float Y = 100.0;
-        const float Radius = 30.0;
+        const float Radius = 10.0;
         float SpeedX = 0;
         float SpeedY = 0;
     };
@@ -53,11 +52,11 @@ int main()
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(-300, 300);
-    float chosenX = dist(gen);
-    float chosenY = dist(gen);
-    Npc.SpeedX = chosenX;
-    Npc.SpeedY = chosenY;
+    std::uniform_real_distribution<float> dist(3.14, 6.28318);
+    float angle = dist(gen);
+
+    Npc.SpeedX = cos(angle)* 400;
+    Npc.SpeedY = sin(angle)* 400;
 
     while (!WindowShouldClose())
         {
@@ -169,16 +168,45 @@ int main()
             float dx = Npc.X - closestX;
             float dy = Npc.Y - closestY;
             float distance = sqrt(dx*dx + dy*dy);
+            float penetration = Npc.Radius - distance;
+
 
             if (distance < Npc.Radius && Score.ShapesTouching == false)
                 {
                     Score.Value++;
+
+
+                    if (distance > 0.0f)
+                        {
+                            Npc.X += (dx /distance) * penetration;
+                            Npc.Y += (dy /distance) * penetration;
+
+
+                                if (closestX == Player.X + Player.Width || closestX == Player.X)
+                                    {
+                                        Npc.SpeedX = -Npc.SpeedX;
+                                    }
+                                else if (closestY == Player.Y + Player.Height || closestY == Player.Y)
+                                    {
+                                        Npc.SpeedY = -Npc.SpeedY;
+                                    }
+
+
+
+                        }
+                    else
+                    {
+                        Npc.Y -= penetration;
+                        Npc.SpeedY = -Npc.SpeedY;
+                        Npc.SpeedX = -Npc.SpeedX;
+                    }
                 }
 
             if (distance < Npc.Radius)
                 {
                     Player.PlayerColor = RED;
                     Score.ShapesTouching = true;
+
                 }
             else
                 {
@@ -188,6 +216,8 @@ int main()
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
+            DrawText(TextFormat("Chosen: %f",Npc.SpeedX), 0, 350, text.Font, LIGHTGRAY);
+            DrawText(TextFormat("Chosen: %f",Npc.SpeedY), 0, 400, text.Font, LIGHTGRAY);
             DrawText("PlayBall", text.X, text.Y, text.Font, LIGHTGRAY);
             DrawText(TextFormat("Score: %i", Score.Value), Score.PositionX, Score.PositionY, Score.FontSize, Score.ScoreColor );
             DrawRectangle(Player.X, Player.Y, Player.Width, Player.Height, Player.PlayerColor);
